@@ -13,3 +13,4 @@ uvicorn app.main:app --reload
 
 - `GET /health`: basic health check
 - `GET /catalog`: full catalog payload (questions, templates, auto-generation rules)
+- `GET /match`: query-to-template matcher using lightweight lexical similarity (query params: `query`, `top_k`)
