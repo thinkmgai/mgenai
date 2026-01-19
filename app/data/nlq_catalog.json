@@ -1,0 +1,311 @@
+{
+  "title": "NLQ Question Catalog and SQL Template Mappings",
+  "question_count": 50,
+  "categories": [
+    {
+      "id": "traffic_activity",
+      "name": "트래픽/사용자 활동",
+      "questions": [
+        "지난 7일 DAU 추이 보여줘",
+        "지난 30일 MAU 추이 보여줘",
+        "어제 설치 수와 실행 수 알려줘",
+        "지난 7일 재방문율(7일 재방문) 추이 알려줘",
+        "iOS/Android 사용자 비중 추이 보여줘",
+        "특정 앱 버전별 방문 수 비교해줘",
+        "국가별 방문 수 TOP 10 보여줘",
+        "시간대별 방문 피크 시간 알려줘",
+        "로그인 사용자 비율 추이 보여줘",
+        "신규 유저와 기존 유저 비율 알려줘"
+      ]
+    },
+    {
+      "id": "performance_loading",
+      "name": "성능/로딩",
+      "questions": [
+        "최근 7일 평균 로딩 시간 추이 보여줘",
+        "최근 7일 평균 응답시간(response_time) 추이 보여줘",
+        "로딩 시간이 가장 긴 페이지 TOP 10 알려줘",
+        "TTFB 평균이 높은 페이지 TOP 10 보여줘",
+        "LCP가 급증한 날짜 알려줘",
+        "INP 평균이 높은 페이지 TOP 10 알려줘",
+        "페이지별 평균 체류시간(loading_time 기반) 비교해줘",
+        "앱 버전별 로딩 시간 비교해줘",
+        "디바이스 모델별 평균 로딩 시간 비교해줘",
+        "네트워크 타입(com_type)별 로딩 시간 비교해줘"
+      ]
+    },
+    {
+      "id": "errors_crashes",
+      "name": "오류/크래시",
+      "questions": [
+        "지난 7일 크래시 발생 추이 알려줘",
+        "에러율이 높은 페이지 TOP 10 보여줘",
+        "JS 에러 급증한 날짜 알려줘",
+        "디바이스 모델별 crash count 비교해줘",
+        "OS 버전별 오류 발생률 비교해줘",
+        "특정 페이지의 오류 로그 상세 보여줘",
+        "에러 발생률이 가장 높은 시간대 알려줘",
+        "특정 앱 버전의 crash rate 알려줘",
+        "로그 타입별 오류 건수 분포 보여줘",
+        "최근 30일 중 이상치(오류 급증일) 알려줘"
+      ]
+    },
+    {
+      "id": "page_flow_behavior",
+      "name": "페이지 흐름/행동",
+      "questions": [
+        "페이지 전환 순서 TOP 3 흐름 보여줘",
+        "특정 페이지 방문 후 이탈이 많은 페이지 알려줘",
+        "페이지별 평균 이벤트 수 비교해줘",
+        "페이지별 평균 request_count 비교해줘",
+        "유입 페이지 기준 전환율 높은 페이지 알려줘",
+        "이전 페이지(pre_url)별 다음 페이지 분포 보여줘",
+        "페이지별 세션당 방문 수 알려줘",
+        "사용자별 페이지 체류시간 분포 알려줘"
+      ]
+    },
+    {
+      "id": "marketing_acquisition",
+      "name": "마케팅/유입",
+      "questions": [
+        "지난 30일 유입 채널별 방문 수 알려줘",
+        "organic vs paid 사용자 비율 추이 보여줘",
+        "캠페인별 전환 이벤트 수 알려줘",
+        "유입 소스별 주요 이벤트 TOP 5 알려줘",
+        "특정 캠페인 기간별 사용자 증가 추이 알려줘",
+        "신규 설치 사용자 유입 채널 비중 알려줘",
+        "지역별(국가/도시) 유입량 TOP 10 알려줘"
+      ]
+    },
+    {
+      "id": "prediction_patterns",
+      "name": "예측/패턴",
+      "questions": [
+        "다음 7일 크래시 추이 예측해줘",
+        "다음 7일 DAU 예측해줘",
+        "로딩 시간 급증 패턴 탐지해줘",
+        "오류율 급등 패턴 탐지해줘",
+        "사용자 이탈 패턴(방문 후 로그 없음) 알려줘"
+      ]
+    }
+  ],
+  "templates": [
+    {
+      "category": "트래픽/사용자 활동",
+      "question_type": "DAU 추이",
+      "parameters": ["days"],
+      "base_table": "maxy_device_statistic",
+      "sql": "SELECT stat_date, dau FROM maxy_device_statistic WHERE stat_date >= today()-{days} ORDER BY stat_date"
+    },
+    {
+      "category": "트래픽/사용자 활동",
+      "question_type": "MAU 추이",
+      "parameters": ["days"],
+      "base_table": "maxy_device_statistic",
+      "sql": "SELECT stat_date, mau FROM maxy_device_statistic WHERE stat_date >= today()-{days} ORDER BY stat_date"
+    },
+    {
+      "category": "트래픽/사용자 활동",
+      "question_type": "설치/실행 수",
+      "parameters": ["date"],
+      "base_table": "maxy_device_access_history",
+      "sql": "SELECT sum(install_cnt) AS installs, sum(visit_cnt) AS visits FROM maxy_device_access_history WHERE log_date = {date}"
+    },
+    {
+      "category": "트래픽/사용자 활동",
+      "question_type": "재방문율",
+      "parameters": ["days"],
+      "base_table": "maxy_device_statistic",
+      "sql": "SELECT stat_date, revisit_7d FROM maxy_device_statistic WHERE stat_date >= today()-{days}"
+    },
+    {
+      "category": "트래픽/사용자 활동",
+      "question_type": "OS 비중",
+      "parameters": ["days"],
+      "base_table": "maxy_device_page_flow",
+      "sql": "SELECT os_type, count() AS cnt FROM maxy_device_page_flow WHERE log_date >= today()-{days} GROUP BY os_type"
+    },
+    {
+      "category": "성능/로딩",
+      "question_type": "로딩시간 추이",
+      "parameters": ["days"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT log_date, avgMerge(avg_loading_tm) AS avg_loading FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY log_date"
+    },
+    {
+      "category": "성능/로딩",
+      "question_type": "응답시간 추이",
+      "parameters": ["days"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT log_date, sumMerge(sum_response_tm) AS response_total FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY log_date"
+    },
+    {
+      "category": "성능/로딩",
+      "question_type": "로딩시간 TOP N",
+      "parameters": ["days", "topN"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT page_name, avgMerge(avg_loading_tm) AS avg_loading FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY page_name ORDER BY avg_loading DESC LIMIT {topN}"
+    },
+    {
+      "category": "성능/로딩",
+      "question_type": "TTFB TOP N",
+      "parameters": ["days", "topN"],
+      "base_table": "maxy_device_page_flow",
+      "sql": "SELECT page_name, avg(ttfb) AS avg_ttfb FROM maxy_device_page_flow WHERE log_date >= today()-{days} GROUP BY page_name ORDER BY avg_ttfb DESC LIMIT {topN}"
+    },
+    {
+      "category": "성능/로딩",
+      "question_type": "버전별 로딩",
+      "parameters": ["days"],
+      "base_table": "maxy_device_page_flow",
+      "sql": "SELECT app_ver, avg(loading_time) AS avg_loading FROM maxy_device_page_flow WHERE log_date >= today()-{days} GROUP BY app_ver"
+    },
+    {
+      "category": "오류/크래시",
+      "question_type": "크래시 추이",
+      "parameters": ["days"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT log_date, sumMerge(sum_crash_count) AS crash_cnt FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY log_date"
+    },
+    {
+      "category": "오류/크래시",
+      "question_type": "에러율 TOP N",
+      "parameters": ["days", "topN"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT page_name, sumMerge(sum_error_count) / sumMerge(sum_log_count) AS error_rate FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY page_name ORDER BY error_rate DESC LIMIT {topN}"
+    },
+    {
+      "category": "오류/크래시",
+      "question_type": "JS 에러 급증",
+      "parameters": ["days"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT log_date, sumMerge(sum_js_error_count) AS js_error_cnt FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY log_date"
+    },
+    {
+      "category": "오류/크래시",
+      "question_type": "모델별 크래시",
+      "parameters": ["days"],
+      "base_table": "maxy_model_hourly",
+      "sql": "SELECT device_model, sumMerge(sum_crash_count) AS crash_cnt FROM maxy_model_hourly WHERE hour_bucket >= now()-INTERVAL {days} DAY GROUP BY device_model"
+    },
+    {
+      "category": "오류/크래시",
+      "question_type": "버전별 크래시",
+      "parameters": ["days"],
+      "base_table": "maxy_device_page_flow",
+      "sql": "SELECT app_ver, sum(crash_count) AS crash_cnt FROM maxy_device_page_flow WHERE log_date >= today()-{days} GROUP BY app_ver"
+    },
+    {
+      "category": "페이지 흐름/행동",
+      "question_type": "페이지 전환 TOP",
+      "parameters": ["days", "topN"],
+      "base_table": "maxy_device_page_flow",
+      "sql": "SELECT pre_url, page_name, count() AS cnt FROM maxy_device_page_flow WHERE log_date >= today()-{days} GROUP BY pre_url, page_name ORDER BY cnt DESC LIMIT {topN}"
+    },
+    {
+      "category": "페이지 흐름/행동",
+      "question_type": "페이지 이탈",
+      "parameters": ["days", "page"],
+      "base_table": "maxy_device_page_flow",
+      "sql": "SELECT pre_url, count() AS cnt FROM maxy_device_page_flow WHERE log_date >= today()-{days} AND page_name = {page} GROUP BY pre_url"
+    },
+    {
+      "category": "페이지 흐름/행동",
+      "question_type": "페이지별 이벤트 수",
+      "parameters": ["days"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT page_name, sumMerge(sum_event_count) AS event_cnt FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY page_name"
+    },
+    {
+      "category": "페이지 흐름/행동",
+      "question_type": "페이지별 요청수",
+      "parameters": ["days"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT page_name, sumMerge(sum_request_count) AS request_cnt FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY page_name"
+    },
+    {
+      "category": "페이지 흐름/행동",
+      "question_type": "세션당 방문수",
+      "parameters": ["days"],
+      "base_table": "maxy_device_page_flow",
+      "sql": "SELECT page_name, count() / uniqExact(device_id) AS visits_per_user FROM maxy_device_page_flow WHERE log_date >= today()-{days} GROUP BY page_name"
+    },
+    {
+      "category": "마케팅/유입",
+      "question_type": "유입 채널별 방문",
+      "parameters": ["days"],
+      "base_table": "maxy_mkt_event_log",
+      "sql": "SELECT traffic_source, count() AS cnt FROM maxy_mkt_event_log WHERE event_date >= today()-{days} GROUP BY traffic_source"
+    },
+    {
+      "category": "마케팅/유입",
+      "question_type": "organic vs paid",
+      "parameters": ["days"],
+      "base_table": "maxy_mkt_event_log",
+      "sql": "SELECT medium, count() AS cnt FROM maxy_mkt_event_log WHERE event_date >= today()-{days} GROUP BY medium"
+    },
+    {
+      "category": "마케팅/유입",
+      "question_type": "캠페인별 전환",
+      "parameters": ["days", "event"],
+      "base_table": "maxy_mkt_event_log",
+      "sql": "SELECT campaign, count() AS cnt FROM maxy_mkt_event_log WHERE event_date >= today()-{days} AND event_name = {event} GROUP BY campaign"
+    },
+    {
+      "category": "마케팅/유입",
+      "question_type": "지역별 유입",
+      "parameters": ["days", "topN"],
+      "base_table": "maxy_mkt_event_log",
+      "sql": "SELECT geo_country, count() AS cnt FROM maxy_mkt_event_log WHERE event_date >= today()-{days} GROUP BY geo_country ORDER BY cnt DESC LIMIT {topN}"
+    },
+    {
+      "category": "마케팅/유입",
+      "question_type": "신규 설치 유입",
+      "parameters": ["days"],
+      "base_table": "maxy_mkt_event_log",
+      "sql": "SELECT traffic_source, countIf(is_first_install = 1) AS install_cnt FROM maxy_mkt_event_log WHERE event_date >= today()-{days} GROUP BY traffic_source"
+    },
+    {
+      "category": "예측/패턴",
+      "question_type": "크래시 예측",
+      "parameters": ["days"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT log_date, sumMerge(sum_crash_count) AS crash_cnt FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY log_date"
+    },
+    {
+      "category": "예측/패턴",
+      "question_type": "DAU 예측",
+      "parameters": ["days"],
+      "base_table": "maxy_device_statistic",
+      "sql": "SELECT stat_date, dau FROM maxy_device_statistic WHERE stat_date >= today()-{days} ORDER BY stat_date"
+    },
+    {
+      "category": "예측/패턴",
+      "question_type": "로딩 급증 탐지",
+      "parameters": ["days"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT log_date, avgMerge(avg_loading_tm) AS avg_loading FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY log_date"
+    },
+    {
+      "category": "예측/패턴",
+      "question_type": "오류율 급등 탐지",
+      "parameters": ["days"],
+      "base_table": "maxy_page_daily",
+      "sql": "SELECT log_date, sumMerge(sum_error_count) / sumMerge(sum_log_count) AS error_rate FROM maxy_page_daily WHERE log_date >= today()-{days} GROUP BY log_date"
+    },
+    {
+      "category": "예측/패턴",
+      "question_type": "이탈 패턴",
+      "parameters": ["days"],
+      "base_table": "maxy_device_access_history",
+      "sql": "SELECT log_date, countIf(visit_cnt=1) AS one_time_users FROM maxy_device_access_history WHERE log_date >= today()-{days} GROUP BY log_date"
+    }
+  ],
+  "auto_generation_rules": [
+    "기간 파라미터: 최근 N일/주/월 → {days}",
+    "그룹핑 키워드: 추이/변화 → GROUP BY date, TOP N → ORDER BY ... LIMIT {topN}",
+    "필터 키워드: iOS/Android/웹 → WHERE os_type = 'ios' 등",
+    "비율 지표: 율/비중 → sum(x)/sum(y) 형태",
+    "예측 요청: SQL로 시계열 추출 후 모델 레이어에서 예측 수행"
+  ]
+}
