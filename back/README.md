@@ -1,19 +1,10 @@
-# NLQ Search Workspace
+# NLQ Catalog API (Back)
 
-This repository is split into `front` (Next.js UI) and `back` (FastAPI service).
+FastAPI service that exposes a catalog of natural-language analytics questions and SQL template mappings.
 
-## Front (Next.js)
-
-```bash
-cd front
-npm install
-npm run dev
-```
-
-## Back (FastAPI)
+## Run locally
 
 ```bash
-cd back
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
