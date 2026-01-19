@@ -1,13 +1,12 @@
 from pathlib import Path
 import json
-
 import logging
 import re
 from difflib import SequenceMatcher
 from typing import Any
 
 from fastapi import FastAPI, Query, Request
-
+from fastapi.middleware.cors import CORSMiddleware
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_PATH = BASE_DIR / "data" / "nlq_catalog.json"
@@ -20,6 +19,13 @@ app = FastAPI(title="NLQ Catalog API", version="0.1.0")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger("nlq.catalog")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 _NON_WORD_PATTERN = re.compile(r"[^0-9a-zA-Z가-힣]+")
 
 
@@ -94,7 +100,13 @@ async def log_requests(request: Request, call_next):
         request.url.path,
         request.url.query,
     )
-    response = await call_next(request)
+
+    try:
+        response = await call_next(request)
+    except Exception:
+        logger.exception("request failed method=%s path=%s", request.method, request.url.path)
+        raise
+
     logger.info(
         "request end method=%s path=%s status=%s",
         request.method,

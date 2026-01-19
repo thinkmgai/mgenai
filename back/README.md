@@ -12,8 +12,6 @@ uvicorn app.main:app --reload
 ## Endpoints
 
 - `GET /health`: basic health check
-- `GET /catalog`: full catalog payload (questions, templates, auto-generation rules)
-
 - `GET /match`: query-to-template matcher using lightweight lexical similarity (query params: `query`, `top_k`, `min_score`)
 
 ## API samples
@@ -51,4 +49,7 @@ Notes:
 
 - `min_score` 이하의 결과는 필터링됩니다. 질문과 템플릿이 매칭되지 않는 경우 `matches` 배열이 비어 있습니다.
 - `strategy` 필드는 매칭 방식(lexical Jaccard + 문자 bigram or 시퀀스 유사도)을 설명합니다.
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9131af1b1be34c8bbdd3a1ce47155e5e32a3cad5
