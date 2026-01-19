@@ -146,10 +146,37 @@ function SimpleLineChart({ data }: { data: ChartPoint[] }) {
 export default function Home() {
   const [query, setQuery] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [matchResult, setMatchResult] = useState<Record<string, unknown> | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8000";
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitted(true);
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      if (query.trim().length < 2) {
+        throw new Error("질문을 2자 이상 입력해주세요.");
+      }
+      const response = await fetch(
+        `${apiBaseUrl}/match?query=${encodeURIComponent(query)}`,
+        { method: "GET" }
+      );
+      if (!response.ok) {
+        throw new Error(`요청 실패 (${response.status})`);
+      }
+      const data = (await response.json()) as Record<string, unknown>;
+      setMatchResult(data);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "알 수 없는 오류가 발생했습니다.");
+      setMatchResult(null);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -189,6 +216,22 @@ export default function Home() {
           </div>
 
           <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+            <div style={{ border: "1px solid #e0e0e0", borderRadius: 12, padding: "1rem" }}>
+              <h2>매칭 결과</h2>
+              {isLoading && <p style={{ marginTop: "0.75rem" }}>매칭 결과를 불러오는 중...</p>}
+              {errorMessage && (
+                <p style={{ marginTop: "0.75rem", color: "#dc2626" }}>오류: {errorMessage}</p>
+              )}
+              {!isLoading && !errorMessage && (
+                <pre style={{ whiteSpace: "pre-wrap", marginTop: "0.75rem" }}>
+                  {JSON.stringify(matchResult ?? sampleMapping, null, 2)}
+                </pre>
+              )}
+              <p style={{ marginTop: "0.75rem", color: "#64748b", fontSize: "0.85rem" }}>
+                API: {apiBaseUrl}/match
+              </p>
+            </div>
+
             <div style={{ border: "1px solid #e0e0e0", borderRadius: 12, padding: "1rem" }}>
               <h2>사용 맵 파일</h2>
               <pre style={{ whiteSpace: "pre-wrap", marginTop: "0.75rem" }}>
